@@ -1,0 +1,66 @@
+/* assets/css/style.css */
+:root {
+    --primary-blue: #0d47a1;
+    --secondary-teal: #00897b;
+    --accent-gold: #ffb300;
+    --text-dark: #212529;
+    --bg-light: #f8f9fa;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-dark);
+    background-color: var(--bg-light);
+}
+
+.text-primary {
+    color: var(--primary-blue) !important;
+}
+
+.bg-primary {
+    background-color: var(--primary-blue) !important;
+}
+
+.btn-primary {
+    background-color: var(--primary-blue);
+    border-color: var(--primary-blue);
+}
+
+.btn-primary:hover {
+    background-color: #0a3579;
+    border-color: #0a3579;
+}
+
+.card {
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.hero {
+    padding: 100px 0;
+    background: linear-gradient(rgba(248, 249, 250, 0.9), rgba(248, 249, 250, 0.9)), url('../images/hero-bg.jpg') center/cover;
+}
+
+.nav-link {
+    font-weight: 500;
+    color: #495057;
+}
+
+.nav-link:hover {
+    color: var(--primary-blue);
+}
+
+.trust-section {
+    background-color: #fff;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.footer {
+    background-color: #1a1a1a;
+}

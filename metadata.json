@@ -1,0 +1,6 @@
+{
+  "name": "Sponsorship Web Application",
+  "description": "A complete, production-ready Sponsorship Web Application connecting sponsors with verified organizations and beneficiaries.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
