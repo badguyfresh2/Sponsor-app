@@ -1,6 +1,6 @@
 {
-  "name": "Sponsorship Web Application",
-  "description": "A complete, production-ready Sponsorship Web Application connecting sponsors with verified organizations and beneficiaries.",
+  "name": "NACMU Portal",
+  "description": "A native-feel mobile web app for sponsors to discover vulnerable beneficiaries, manage active sponsorships, track live impact updates, and interact with Noah's Ark Children's Ministry Uganda (NACMU).",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

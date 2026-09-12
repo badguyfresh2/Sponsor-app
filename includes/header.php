@@ -1,61 +1,118 @@
 <?php
-// includes/header.php
+require_once dirname(__DIR__) . '/config/config.php';
+require_once dirname(__DIR__) . '/config/database.php';
+require_once dirname(__DIR__) . '/includes/auth.php';
+require_once dirname(__DIR__) . '/includes/functions.php';
+
+$currentUser = get_authenticated_user();
+$unreadNotifs = $currentUser ? get_unread_notifications_count($currentUser['id']) : 0;
+$pageTitle = $page_title ?? 'NACMU Portal';
+$showBack = $show_back ?? false;
+$backUrl = $back_url ?? (BASE_URL . '/sponsor/dashboard.php');
+$flash = get_flash();
+
+// Time-based greeting
+$hour = (int)date('H');
+if ($hour < 12) {
+    $greeting = "Good morning";
+} elseif ($hour < 17) {
+    $greeting = "Good afternoon";
+} else {
+    $greeting = "Good evening";
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= isset($page_title) ? htmlspecialchars($page_title) : APP_NAME ?></title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#2563EB">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title><?= e($pageTitle) ?> | <?= APP_NAME ?></title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="<?= BASE_URL ?>/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563EB'><path d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/></svg>">
+
+  <!-- Tailwind CSS CDN for swift, accurate utility styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#EFF6FF',
+              500: '#2563EB',
+              600: '#1D4ED8',
+              700: '#1E40AF',
+            },
+            tealbrand: {
+              50: '#F0FDFA',
+              500: '#0EA5A4',
+              600: '#0F766E'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Custom App Styles -->
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/app.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/mobile.css">
+
+  <script>
+    window.BASE_URL = "<?= BASE_URL ?>";
+    window.APP_SID = "<?= session_id() ?>";
+    window.CSRF_TOKEN = "<?= generate_csrf_token() ?>";
+  </script>
 </head>
 <body>
+<div class="mobile-app-container">
 
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
-    <div class="container">
-        <a class="navbar-brand fw-bold text-primary" href="<?= base_url() ?>">
-            <i class="fas fa-hands-holding-child me-2"></i>SPONSOR
+  <?php if (!empty($currentUser) && empty($hide_header)): ?>
+  <!-- Top App Bar -->
+  <header class="mobile-header">
+    <?php if ($showBack): ?>
+      <div class="flex items-center gap-3">
+        <a href="<?= e($backUrl) ?>" class="icon-button" aria-label="Go Back">
+          <i class="fa-solid fa-arrow-left text-slate-700"></i>
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-toggle="target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item"><a class="nav-link" href="<?= base_url() ?>">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="<?= base_url('beneficiaries.php') ?>">Find a Child</a></li>
-                <li class="nav-item"><a class="nav-link" href="<?= base_url('organizations.php') ?>">Organizations</a></li>
-            </ul>
-            <ul class="navbar-nav">
-                <?php if (is_logged_in()): ?>
-                    <li class="nav-item">
-                        <a class="nav-link fw-bold" href="<?= base_url(current_user_role() . '/dashboard.php') ?>">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-outline-danger ms-2" href="<?= base_url('auth/logout.php') ?>">Logout</a>
-                    </li>
-                <?php else: ?>
-                    <li class="nav-item"><a class="nav-link" href="<?= base_url('auth/login.php') ?>">Login</a></li>
-                    <li class="nav-item"><a class="btn btn-primary ms-2" href="<?= base_url('auth/register.php?role=sponsor') ?>">Become a Sponsor</a></li>
-                <?php endif; ?>
-            </ul>
+        <h1 class="text-base font-bold text-slate-900 truncate max-w-[200px]"><?= e($pageTitle) ?></h1>
+      </div>
+    <?php else: ?>
+      <a href="<?= BASE_URL ?>/sponsor/profile.php" class="header-user-badge">
+        <img src="<?= e($currentUser['avatar_url'] ?: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80') ?>" alt="<?= e($currentUser['name']) ?>" class="header-avatar">
+        <div>
+          <div class="header-greeting-title"><?= $greeting ?></div>
+          <div class="header-user-name"><?= e(explode(' ', $currentUser['name'])[0]) ?></div>
         </div>
-    </div>
-</nav>
+      </a>
+    <?php endif; ?>
 
-<main class="min-vh-100">
-    <?php
-    $flash = get_flash_message();
-    if ($flash):
-    ?>
-    <div class="container mt-3">
-        <div class="alert alert-<?= htmlspecialchars($flash['type']) ?> alert-dismissible fade show" role="alert">
-            <?= htmlspecialchars($flash['message']) ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+    <div class="header-actions">
+      <?php if (!empty($header_action_html)): ?>
+        <?= $header_action_html ?>
+      <?php endif; ?>
+      <a href="<?= BASE_URL ?>/sponsor/notifications.php" id="headerNotifBtn" class="icon-button header-notif-btn relative" aria-label="Notifications">
+        <i class="fa-regular fa-bell text-slate-700 text-lg"></i>
+        <?php if ($unreadNotifs > 0): ?>
+          <span class="notification-badge"><?= $unreadNotifs > 9 ? '9+' : $unreadNotifs ?></span>
+        <?php endif; ?>
+      </a>
     </div>
+  </header>
+  <?php endif; ?>
+
+  <main class="mobile-content <?= !empty($is_auth_flow) ? 'auth-flow' : '' ?> <?= !empty($is_chat_view) ? 'chat-view-mode' : '' ?>">
+    <?php if ($flash): ?>
+      <div class="flash-banner <?= e($flash['type']) ?>">
+        <i class="fa-solid <?= $flash['type'] === 'success' ? 'fa-circle-check' : ($flash['type'] === 'error' ? 'fa-triangle-exclamation' : 'fa-circle-info') ?>"></i>
+        <span><?= e($flash['message']) ?></span>
+      </div>
     <?php endif; ?>
